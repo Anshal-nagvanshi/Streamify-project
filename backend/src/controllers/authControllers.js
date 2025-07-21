@@ -103,5 +103,11 @@ export function logout(req, res) {
 }
 
 export async function onboard(req, res) {
-  
+  try {
+    const userId = req.user._id;
+
+    
+  } catch (error) {
+    
+  }
 }
