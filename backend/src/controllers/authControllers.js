@@ -117,7 +117,7 @@ export async function onboard(req, res) {
          !nativeLanguage && "nativeLanguage",
          !learningLanguage && "learningLanguage",
          !location && "location",
-        ],
+        ].filter(Boolean),
        });
     }
     const updatedUser = await User.findByIdAndUpdate(userId, {
