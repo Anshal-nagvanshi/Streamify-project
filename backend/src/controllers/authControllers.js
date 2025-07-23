@@ -123,11 +123,28 @@ export async function onboard(req, res) {
     const updatedUser = await User.findByIdAndUpdate(userId, {
       ...req.body,
       isOnboarded: true,
-    }, { new: true })
-
+    }, { new: true });
+  
     if (!updatedUser) return res.status(404).json({ message: "User not found" });
 
-      res.status(200).json({ success: true, user: updatedUser });
+    try {
+      await upsertStreamUser({
+        id: updatedUser._id.toString(),
+        name: updatedUser.fullName,
+        image: updatedUser.profilePic || "",
+      });
+
+      console.log(`Stream user updated after onboarding for ${updatedUser.fullName}`);
+    } catch (streamError) {
+      console.error("Error updating stream user during onboarding", streamError.massage);
+    }
+    await upsertStreamUser({
+      id: updatedUser._id.toString(),
+      name: updatedUser.fullName,
+      image: updatedUser.profilePic || "",
+    });
+
+    res.status(200).json({ success: true, user: updatedUser });
   } catch (error) {
     console.error("onboarding error:", error);
     res.status(500).json({ message: "Internal Server Error" });
